@@ -71,25 +71,29 @@ def insert(table_name, cols, data):
 # conn.close()
 
 db = sqlite3.connect('db.sqlite')
-cure = db.cursor()
+cur = db.cursor()
 
-query="""
-CREATE TABLE groups(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    goupName TEXT
-)
-"""
-cure.execute(query)
-db.commit()
-db.close()
+# query="""
+# CREATE TABLE groups (
+#     id INTEGER PRIMARY KEY AUTOINCREMENT,
+#     groupName TEXT
+# )
+# """
+# cur.execute(query)
+# db.commit()
 
-query="""
-CREATE TABLE users(
-    id INTEGER PRIMARY KEY,
-    groupid INTEGER,
-    FOREIGN KEY (groupid) REFERENCE groups (id) 
-)
-"""
-cure.execute(query)
-db.commit()
+# query="""
+# CREATE TABLE users (
+#     id INTEGER PRIMARY KEY,
+#     groupid INTEGER,
+#     FOREIGN KEY (groupid) REFERENCE groups (id) 
+# )
+# """
+# cur.execute(query)
+# db.commit()
+
+# insert("groups", ["groupName"], ["Админы"])
+# insert("groups", ["groupName"], ["Модеры"])
+# insert("groups", ["groupName"], ["Холопы"])
+print(get("groups"))
 db.close()

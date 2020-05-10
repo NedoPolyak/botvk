@@ -25,7 +25,7 @@ SECRET_KEY = 'yv@5bl@t#k$zd2tcjjk9pxsrz91$o7e43c%rn0e@2v7l7noj@f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['obgrizok-492fcdeb.localhost.run']
+ALLOWED_HOSTS = ['nedobbot-492fcdeb.localhost.run']
 
 
 # Application definition

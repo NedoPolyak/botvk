@@ -1,12 +1,9 @@
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt 
 from django.http import HttpResponse
 from django.shortcuts import render
-import json
-import vk
-import random
+import json, vk, random
 import sqlite3
 import database
-
 
 
 session = vk.Session(access_token="dc1b1e7a27edd81f03b53fa59cc37e23c8bd23a506a755630eedbcfbb4d07964476568ed14b7950ee27db")
@@ -21,12 +18,14 @@ def bot(request):
         return HttpResponse("61f00e45")
     if body['type'] == "message_new":
         userID = body['object']['message']["from_id"]
+        payload = body["object"]["message"]["payload"]
         msg = body['object']['message']["text"]
         answ = ""
         param = 0
         attach = ""
-        #userinfo = vkAPI.users.get(user_ids = userID, v=5.103)[0]
-        
+        userinfo = vkAPI.users.get(user_ids = userID, v=5.103)[0]
+        if payload == """{"command":"start"}""":
+            keyboardstart(request, userID)
         sendAnswer(userID, answ, attach)
     if msg == "/help":
         answ = """Команды:
@@ -56,14 +55,42 @@ def bot(request):
         param = 0
     elif (msg == "/wake up") and (param == 0):
         answ = "Я не сплю, шо надо?"
-    elif msg == "/list":
-        conn  = sqlite3.connect('db.sqlite')
-        cur = conn.cursor()
-        query="""
-        SELECT * FROM answer
-        """
-        cur.execute(query)
-        answ = cur.fetchall()
-        conn.close()
-def sendAnswer(userID, answ = "", attach = ""):
-	vkAPI.messages.send(user_id = userID, message = answ, attachment=attach, random_id = random.randint(1, 99999999999999999), v=5.103)
+    return HttpResponse("ok")
+def sendAnswer(userID, answ = "", attach = "", keyboard = ""):
+	vkAPI.messages.send(user_id = userID, message = answ, attachment=attach, keyboard=keyboard, random_id = random.randint(1, 99999999999999999), v=5.103)
+def keyboardstart(request, userID):
+	answ = "Привет! Выбери свою группу пользователя! Команды - /help"
+	keyboard = json.dumps({
+		"one_time": True,
+
+		"buttons":[[
+			{
+				"action": {
+					"type":"text",
+					"label":"Админы",
+					"payload": """{"command":"admins"}"""
+				},
+				"color":"positive"
+			},
+            {
+				"action": {
+					"type":"text",
+					"label":"Модеры",
+					"payload": """{"command":"moders"}"""
+				},
+				"color":"primary"
+			},
+            {
+				"action": {
+					"type":"text",
+					"label":"Холопы",
+					"payload": """{"command":"nothings"}"""
+				},
+				"color":"negative"
+			}
+		]]
+	})
+	
+
+
+	sendAnswer(userID, answ, keyboard = keyboard)
