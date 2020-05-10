@@ -85,8 +85,9 @@ db.close()
 
 query="""
 CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    FOREIGN KEY id REFERENCE groups groupId 
+    id INTEGER PRIMARY KEY,
+    groupid INTEGER,
+    FOREIGN KEY (groupid) REFERENCE groups (id) 
 )
 """
 cure.execute(query)
