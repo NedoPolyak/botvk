@@ -74,7 +74,7 @@ db = sqlite3.connect('db.sqlite')
 cure = db.cursor()
 
 query="""
-CREATE TABLE groups (
+CREATE TABLE groups(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goupName TEXT
 )
@@ -84,7 +84,7 @@ db.commit()
 db.close()
 
 query="""
-CREATE TABLE users (
+CREATE TABLE users(
     id INTEGER PRIMARY KEY,
     groupid INTEGER,
     FOREIGN KEY (groupid) REFERENCE groups (id) 
