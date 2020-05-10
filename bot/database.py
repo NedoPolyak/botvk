@@ -70,10 +70,25 @@ def insert(table_name, cols, data):
 # print(cure.fetchall())
 # conn.close()
 
+db = sqlite3.connect('db.sqlite')
+cure = db.cursor()
+
 query="""
-CREATE TABLE group 
+CREATE TABLE groups (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    goupName TEXT
+)
 """
 cure.execute(query)
-conn.commit()
-print(cure.fetchall())
-conn.close()
+db.commit()
+db.close()
+
+query="""
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    FOREIGN KEY id REFERENCE groups groupId 
+)
+"""
+cure.execute(query)
+db.commit()
+db.close()
