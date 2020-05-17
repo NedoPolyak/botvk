@@ -20,4 +20,5 @@ import botVK.views as bot
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("botVK/", bot.bot),
+    path("login/", bot.login),
 ]

@@ -5,7 +5,6 @@ import json, vk, random
 import sqlite3
 import database
 
-
 session = vk.Session(access_token="dc1b1e7a27edd81f03b53fa59cc37e23c8bd23a506a755630eedbcfbb4d07964476568ed14b7950ee27db")
 vkAPI = vk.API(session)
 
@@ -21,12 +20,33 @@ def bot(request):
         payload = body["object"]["message"]["payload"]
         msg = body['object']['message']["text"]
         answ = ""
-        param = 0
         attach = ""
-        userinfo = vkAPI.users.get(user_ids = userID, v=5.103)[0]
-        if payload == """{"command":"start"}""":
-            keyboardstart(request, userID)
+        userInfo = vkAPI.users.get(user_ids = userID, v=5.103)[0]
+        if "payload" in body["object"]["message"]:
+            payload = body["object"]["message"]["payload"]
+            if payload == """{"command":"start"}""":
+                keyboardstart(request, userID)
+            else:
+                try:
+                    gpid = -1
+                    gpname = ""
+                    if payload == """{"command":"admins"}""":
+                        gpid = str(1)
+                        gpname = "Админ"
+                    elif payload == """{"command":"moders"}""":
+                        gpid = str(2)
+                        gpname = "Модер"
+                    elif payload == """{"command":"nothings"}""":
+                        gpid = str(3)
+                        gpname = "Холоп"
+                    database.insert("users", ["id, groupId"], [str(userID), gpid])
+                    speak(request,userID, userInfo, answ = "Вы были добавлены в группу {0}".format(gpname))
+                except Exception as e:
+                    speak(request,userID, userInfo, answ = "Error") 
+        else:
+            speak(request,userID, userInfo, msg)
         sendAnswer(userID, answ, attach)
+def speak(request,userID, userInfo = "", msg = "",  answ = "", attach=""):
     if msg == "/help":
         answ = """Команды:
         /say "cообщение" - возврат вашего сообщения
@@ -94,3 +114,15 @@ def keyboardstart(request, userID):
 
 
 	sendAnswer(userID, answ, keyboard = keyboard)
+
+lg = {
+    "success":False,
+    "groups":database.get('groups', ["groupName"])
+}
+
+def login(request):
+    global lg
+
+    if "admin" == request.GET.get("login") and "0000" == request.GET.get("password"):
+        lg["success"]=True
+    return render(request, "login.html", lg)
